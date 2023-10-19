@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/bakjos/pipeline/pkg/step"
+	"github.com/jensneuse/pipeline/pkg/step"
 	"io"
 )
 

@@ -1,4 +1,4 @@
-module github.com/bakjos/pipeline
+module github.com/jensneuse/pipeline
 
 go 1.18
 

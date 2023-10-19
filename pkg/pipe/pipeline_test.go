@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/Masterminds/sprig"
-	"github.com/bakjos/pipeline/pkg/step"
+	"github.com/jensneuse/pipeline/pkg/step"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"

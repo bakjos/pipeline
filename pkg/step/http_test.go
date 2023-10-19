@@ -2,6 +2,7 @@ package step
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -24,7 +25,7 @@ func TestHttpStep_Invoke(t *testing.T) {
 		URL:    srv.URL,
 	}
 
-	inBytes,err := json.Marshal(in)
+	inBytes, err := json.Marshal(in)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -36,13 +37,13 @@ func TestHttpStep_Invoke(t *testing.T) {
 
 	out := bytes.Buffer{}
 
-	err = step.Invoke(bytes.NewReader(inBytes),&out)
+	err = step.Invoke(context.Background(), bytes.NewReader(inBytes), &out)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	var output HttpStepOutput
-	err = json.Unmarshal(out.Bytes(),&output)
+	err = json.Unmarshal(out.Bytes(), &output)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,12 +52,12 @@ func TestHttpStep_Invoke(t *testing.T) {
 		t.Fatal("want 200 OK")
 	}
 
-	outputBody,err := json.Marshal(output.Body)
+	outputBody, err := json.Marshal(output.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if string(outputBody) != outBody {
-		t.Fatalf("want: %s, got: %s\n",outBody,output.Body)
+		t.Fatalf("want: %s, got: %s\n", outBody, output.Body)
 	}
 }
