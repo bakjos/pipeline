@@ -2,9 +2,10 @@ package pipe
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"github.com/Masterminds/sprig"
-	"github.com/jensneuse/pipeline/pkg/step"
+	"github.com/bakjos/pipeline/pkg/step"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -45,7 +46,7 @@ func TestPipeline_Run_Simple(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = pipeline.Run(&input, &output)
+	err = pipeline.Run(context.Background(), &input, &output)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -125,7 +126,7 @@ func TestPipeline_Run_Complex(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = pipeline.Run(&input, &output)
+	err = pipeline.Run(context.Background(), &input, &output)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -234,7 +235,7 @@ func BenchmarkPipeline_Run_Complex(b *testing.B) {
 	b.ResetTimer()
 	b.ReportAllocs()
 
-	for i := 0;i<b.N;i++{
+	for i := 0; i < b.N; i++ {
 		output.Reset()
 		input.Reset()
 
@@ -243,7 +244,7 @@ func BenchmarkPipeline_Run_Complex(b *testing.B) {
 			b.Fatal(err)
 		}
 
-		err = pipeline.Run(&input, &output)
+		err = pipeline.Run(context.Background(), &input, &output)
 		if err != nil {
 			b.Fatal(err)
 		}

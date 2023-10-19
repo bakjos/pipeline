@@ -1,10 +1,10 @@
 package step
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/Masterminds/sprig"
 	"io"
-	"io/ioutil"
 	"text/template"
 )
 
@@ -26,7 +26,7 @@ func UnmarshalJsonStep(reader io.Reader) (JsonStep, error) {
 	return step, err
 }
 
-func NewJSON(tmpl string) (step JsonStep,err error) {
+func NewJSON(tmpl string) (step JsonStep, err error) {
 	step.Template = tmpl
 	step.tmpl = template.New("")
 	step.tmpl.Funcs(sprig.TxtFuncMap())
@@ -34,8 +34,8 @@ func NewJSON(tmpl string) (step JsonStep,err error) {
 	return step, err
 }
 
-func (j JsonStep) Invoke(reader io.Reader, writer io.Writer) error {
-	data, err := ioutil.ReadAll(reader)
+func (j JsonStep) Invoke(ctx context.Context, reader io.Reader, writer io.Writer) error {
+	data, err := io.ReadAll(reader)
 	if err != nil {
 		return err
 	}

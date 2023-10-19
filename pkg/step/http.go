@@ -2,9 +2,9 @@ package step
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -41,7 +41,7 @@ type HttpStepOutput struct {
 	Body       map[string]interface{} `json:"body"`
 }
 
-func (h HttpStep) Invoke(reader io.Reader, writer io.Writer) error {
+func (h HttpStep) Invoke(ctx context.Context, reader io.Reader, writer io.Writer) error {
 	var config HttpStepInput
 	err := json.NewDecoder(reader).Decode(&config)
 	if err != nil {
@@ -64,7 +64,7 @@ func (h HttpStep) Invoke(reader io.Reader, writer io.Writer) error {
 	var out HttpStepOutput
 	out.StatusCode = res.StatusCode
 	out.Header = res.Header
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}

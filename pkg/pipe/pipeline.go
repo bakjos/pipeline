@@ -3,8 +3,9 @@ package pipe
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
-	"github.com/jensneuse/pipeline/pkg/step"
+	"github.com/bakjos/pipeline/pkg/step"
 	"io"
 )
 
@@ -12,7 +13,7 @@ import (
 // The previous (or first) pipeline step will pipe its result to the reader of the next (or final) pipeline step.
 // The step is expected to write its result to the writer so that the next (or final) step can proceed doing its work.
 type Step interface {
-	Invoke(reader io.Reader, writer io.Writer) error
+	Invoke(ctx context.Context, reader io.Reader, writer io.Writer) error
 }
 
 // Config is the Configuration Object to setup all steps
@@ -59,29 +60,29 @@ func (p *Pipeline) FromConfig(reader io.Reader) error {
 // Run starts the pipeline
 // It takes the input from the reader and pipes it into the first step
 // The result written to the writer of the last step will be emitted to the writer passed to Run
-func (p *Pipeline) Run (reader io.Reader,writer io.Writer) error {
+func (p *Pipeline) Run(ctx context.Context, reader io.Reader, writer io.Writer) error {
 
 	readBuf := bytes.Buffer{}
 	writeBuf := bytes.Buffer{}
 
-	_,err := readBuf.ReadFrom(reader)
+	_, err := readBuf.ReadFrom(reader)
 	if err != nil {
 		return err
 	}
 
 	for i := range p.Steps {
-		err = p.Steps[i].Invoke(&readBuf,&writeBuf)
+		err = p.Steps[i].Invoke(ctx, &readBuf, &writeBuf)
 		if err != nil {
 			return err
 		}
 		readBuf.Reset()
-		_,err = writeBuf.WriteTo(&readBuf)
+		_, err = writeBuf.WriteTo(&readBuf)
 		if err != nil {
 			return err
 		}
 		writeBuf.Reset()
 	}
 
-	_,err = readBuf.WriteTo(writer)
+	_, err = readBuf.WriteTo(writer)
 	return err
 }
